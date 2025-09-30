@@ -1,401 +1,454 @@
-import React, { useState, useEffect } from 'react';
-import { Plus, X, TrendingUp, List, Calendar } from 'lucide-react';
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hyper Stacks</title>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script crossorigin src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { margin: 0; padding: 0; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
 
-const MILESTONES = [
-  { name: 'Super Stack', points: 50, color: 'emerald' },
-  { name: 'Mega Stack', points: 100, color: 'blue' },
-  { name: 'Ultra Stack', points: 150, color: 'purple' },
-  { name: 'Hyper Stack', points: 200, color: 'amber' }
-];
+    <script type="text/babel">
+        const { useState, useEffect } = React;
 
-const COLOR_SCHEMES = {
-  default: {
-    bg: 'bg-slate-900',
-    card: 'bg-slate-800',
-    button: 'bg-slate-700 hover:bg-slate-600',
-    text: 'text-white',
-    accent: 'text-slate-400'
-  },
-  emerald: {
-    bg: 'bg-emerald-900',
-    card: 'bg-emerald-800',
-    button: 'bg-emerald-700 hover:bg-emerald-600',
-    text: 'text-white',
-    accent: 'text-emerald-300'
-  },
-  blue: {
-    bg: 'bg-blue-900',
-    card: 'bg-blue-800',
-    button: 'bg-blue-700 hover:bg-blue-600',
-    text: 'text-white',
-    accent: 'text-blue-300'
-  },
-  purple: {
-    bg: 'bg-purple-900',
-    card: 'bg-purple-800',
-    button: 'bg-purple-700 hover:bg-purple-600',
-    text: 'text-white',
-    accent: 'text-purple-300'
-  },
-  amber: {
-    bg: 'bg-amber-600',
-    card: 'bg-amber-500',
-    button: 'bg-amber-400 hover:bg-amber-300',
-    text: 'text-slate-900',
-    accent: 'text-amber-900'
-  }
-};
+        const Plus = () => (
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"></line>
+                <line x1="5" y1="12" x2="19" y2="12"></line>
+            </svg>
+        );
 
-export default function HyperStacksApp() {
-  const [currentStacks, setCurrentStacks] = useState(0);
-  const [tasks, setTasks] = useState([]);
-  const [history, setHistory] = useState([]);
-  const [activeTab, setActiveTab] = useState('tracker');
-  const [showAddTask, setShowAddTask] = useState(false);
-  const [newTask, setNewTask] = useState({ name: '', points: 1 });
-  const [currentDate, setCurrentDate] = useState(new Date().toDateString());
+        const X = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line>
+                <line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>
+        );
 
-  // Load data from memory on mount
-  useEffect(() => {
-    const savedData = window.hyperStacksData || {
-      currentStacks: 0,
-      tasks: [],
-      history: [],
-      lastDate: new Date().toDateString()
-    };
+        const TrendingUp = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline>
+                <polyline points="17 6 23 6 23 12"></polyline>
+            </svg>
+        );
 
-    // Check if it's a new day
-    const today = new Date().toDateString();
-    if (savedData.lastDate !== today && savedData.currentStacks > 0) {
-      // Save yesterday's progress to history
-      const reachedMilestones = MILESTONES.filter(m => savedData.currentStacks >= m.points).length;
-      const newHistory = [...savedData.history, {
-        date: savedData.lastDate,
-        stacks: savedData.currentStacks,
-        milestones: reachedMilestones
-      }];
-      
-      setHistory(newHistory);
-      setCurrentStacks(0);
-      setTasks(savedData.tasks);
-      window.hyperStacksData = {
-        currentStacks: 0,
-        tasks: savedData.tasks,
-        history: newHistory,
-        lastDate: today
-      };
-    } else {
-      setCurrentStacks(savedData.currentStacks);
-      setTasks(savedData.tasks);
-      setHistory(savedData.history);
-    }
-    
-    setCurrentDate(today);
-  }, []);
+        const List = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
+            </svg>
+        );
 
-  // Save data to memory whenever it changes
-  useEffect(() => {
-    window.hyperStacksData = {
-      currentStacks,
-      tasks,
-      history,
-      lastDate: currentDate
-    };
-  }, [currentStacks, tasks, history, currentDate]);
+        const Calendar = () => (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+        );
 
-  const addStacks = (amount) => {
-    setCurrentStacks(prev => Math.min(prev + amount, 200));
-  };
+        const MILESTONES = [
+            { name: 'Super Stack', points: 50, color: 'emerald' },
+            { name: 'Mega Stack', points: 100, color: 'blue' },
+            { name: 'Ultra Stack', points: 150, color: 'purple' },
+            { name: 'Hyper Stack', points: 200, color: 'amber' }
+        ];
 
-  const addTask = () => {
-    if (newTask.name.trim()) {
-      setTasks([...tasks, { ...newTask, id: Date.now() }]);
-      setNewTask({ name: '', points: 1 });
-      setShowAddTask(false);
-    }
-  };
+        const COLOR_SCHEMES = {
+            default: {
+                bg: 'bg-slate-900',
+                card: 'bg-slate-800',
+                button: 'bg-slate-700 hover:bg-slate-600',
+                text: 'text-white',
+                accent: 'text-slate-400'
+            },
+            emerald: {
+                bg: 'bg-emerald-900',
+                card: 'bg-emerald-800',
+                button: 'bg-emerald-700 hover:bg-emerald-600',
+                text: 'text-white',
+                accent: 'text-emerald-300'
+            },
+            blue: {
+                bg: 'bg-blue-900',
+                card: 'bg-blue-800',
+                button: 'bg-blue-700 hover:bg-blue-600',
+                text: 'text-white',
+                accent: 'text-blue-300'
+            },
+            purple: {
+                bg: 'bg-purple-900',
+                card: 'bg-purple-800',
+                button: 'bg-purple-700 hover:bg-purple-600',
+                text: 'text-white',
+                accent: 'text-purple-300'
+            },
+            amber: {
+                bg: 'bg-amber-600',
+                card: 'bg-amber-500',
+                button: 'bg-amber-400 hover:bg-amber-300',
+                text: 'text-slate-900',
+                accent: 'text-amber-900'
+            }
+        };
 
-  const deleteTask = (id) => {
-    setTasks(tasks.filter(t => t.id !== id));
-  };
+        function HyperStacksApp() {
+            const [currentStacks, setCurrentStacks] = useState(0);
+            const [tasks, setTasks] = useState([]);
+            const [history, setHistory] = useState([]);
+            const [activeTab, setActiveTab] = useState('tracker');
+            const [showAddTask, setShowAddTask] = useState(false);
+            const [newTask, setNewTask] = useState({ name: '', points: 1 });
+            const [currentDate, setCurrentDate] = useState(new Date().toDateString());
 
-  const getCurrentMilestone = () => {
-    for (let i = MILESTONES.length - 1; i >= 0; i--) {
-      if (currentStacks >= MILESTONES[i].points) {
-        return MILESTONES[i];
-      }
-    }
-    return null;
-  };
+            useEffect(() => {
+                const savedData = JSON.parse(localStorage.getItem('hyperStacksData') || '{}');
+                const defaultData = {
+                    currentStacks: 0,
+                    tasks: [],
+                    history: [],
+                    lastDate: new Date().toDateString()
+                };
 
-  const getNextMilestone = () => {
-    return MILESTONES.find(m => currentStacks < m.points);
-  };
+                const data = { ...defaultData, ...savedData };
+                const today = new Date().toDateString();
 
-  const currentMilestone = getCurrentMilestone();
-  const nextMilestone = getNextMilestone();
-  const colorScheme = COLOR_SCHEMES[currentMilestone?.color || 'default'];
+                if (data.lastDate !== today && data.currentStacks > 0) {
+                    const reachedMilestones = MILESTONES.filter(m => data.currentStacks >= m.points).length;
+                    const newHistory = [...data.history, {
+                        date: data.lastDate,
+                        stacks: data.currentStacks,
+                        milestones: reachedMilestones
+                    }];
+                    
+                    setHistory(newHistory);
+                    setCurrentStacks(0);
+                    setTasks(data.tasks);
+                    localStorage.setItem('hyperStacksData', JSON.stringify({
+                        currentStacks: 0,
+                        tasks: data.tasks,
+                        history: newHistory,
+                        lastDate: today
+                    }));
+                } else {
+                    setCurrentStacks(data.currentStacks);
+                    setTasks(data.tasks);
+                    setHistory(data.history);
+                }
+                
+                setCurrentDate(today);
+            }, []);
 
-  const maxHistory = Math.max(...history.map(h => h.stacks), 200);
+            useEffect(() => {
+                localStorage.setItem('hyperStacksData', JSON.stringify({
+                    currentStacks,
+                    tasks,
+                    history,
+                    lastDate: currentDate
+                }));
+            }, [currentStacks, tasks, history, currentDate]);
 
-  return (
-    <div className={`min-h-screen ${colorScheme.bg} ${colorScheme.text} pb-20`}>
-      {/* Header */}
-      <div className={`${colorScheme.card} p-6 shadow-lg`}>
-        <h1 className="text-3xl font-bold text-center mb-2">Hyper Stacks</h1>
-        <p className={`text-center ${colorScheme.accent} text-sm`}>
-          {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
-      </div>
+            const addStacks = (amount) => {
+                setCurrentStacks(prev => Math.min(prev + amount, 200));
+            };
 
-      {/* Tab Navigation */}
-      <div className="flex border-b border-slate-700">
-        <button
-          onClick={() => setActiveTab('tracker')}
-          className={`flex-1 py-3 px-4 flex items-center justify-center gap-2 ${
-            activeTab === 'tracker' ? colorScheme.button : 'bg-transparent'
-          }`}
-        >
-          <TrendingUp size={20} />
-          Tracker
-        </button>
-        <button
-          onClick={() => setActiveTab('tasks')}
-          className={`flex-1 py-3 px-4 flex items-center justify-center gap-2 ${
-            activeTab === 'tasks' ? colorScheme.button : 'bg-transparent'
-          }`}
-        >
-          <List size={20} />
-          Tasks
-        </button>
-        <button
-          onClick={() => setActiveTab('history')}
-          className={`flex-1 py-3 px-4 flex items-center justify-center gap-2 ${
-            activeTab === 'history' ? colorScheme.button : 'bg-transparent'
-          }`}
-        >
-          <Calendar size={20} />
-          History
-        </button>
-      </div>
+            const addTask = () => {
+                if (newTask.name.trim()) {
+                    setTasks([...tasks, { ...newTask, id: Date.now() }]);
+                    setNewTask({ name: '', points: 1 });
+                    setShowAddTask(false);
+                }
+            };
 
-      {/* Main Content */}
-      <div className="p-6">
-        {activeTab === 'tracker' && (
-          <div className="space-y-6">
-            {/* Current Stack Count */}
-            <div className={`${colorScheme.card} rounded-2xl p-8 text-center shadow-xl`}>
-              <p className={`${colorScheme.accent} text-sm uppercase tracking-wide mb-2`}>
-                Current Stacks
-              </p>
-              <p className="text-6xl font-bold mb-4">{currentStacks}</p>
-              {currentMilestone && (
-                <div className="mb-2">
-                  <span className={`inline-block px-4 py-2 rounded-full ${colorScheme.button} font-semibold`}>
-                    🏆 {currentMilestone.name}
-                  </span>
-                </div>
-              )}
-              {nextMilestone && (
-                <p className={`${colorScheme.accent} text-sm`}>
-                  {nextMilestone.points - currentStacks} more to {nextMilestone.name}
-                </p>
-              )}
-              {currentStacks >= 200 && (
-                <p className={`${colorScheme.accent} text-sm`}>
-                  🎉 Maximum milestone reached!
-                </p>
-              )}
-            </div>
+            const deleteTask = (id) => {
+                setTasks(tasks.filter(t => t.id !== id));
+            };
 
-            {/* Milestone Progress */}
-            <div className={`${colorScheme.card} rounded-2xl p-6 shadow-xl`}>
-              <h3 className="font-semibold mb-4">Milestone Progress</h3>
-              <div className="space-y-3">
-                {MILESTONES.map((milestone, idx) => {
-                  const isReached = currentStacks >= milestone.points;
-                  const progress = Math.min((currentStacks / milestone.points) * 100, 100);
-                  
-                  return (
-                    <div key={idx}>
-                      <div className="flex justify-between text-sm mb-1">
-                        <span>{milestone.name}</span>
-                        <span>{milestone.points} pts</span>
-                      </div>
-                      <div className="w-full bg-slate-700 rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full transition-all duration-500 ${
-                            isReached ? `bg-${milestone.color}-500` : 'bg-slate-600'
-                          }`}
-                          style={{ width: `${progress}%` }}
-                        />
-                      </div>
+            const getCurrentMilestone = () => {
+                for (let i = MILESTONES.length - 1; i >= 0; i--) {
+                    if (currentStacks >= MILESTONES[i].points) {
+                        return MILESTONES[i];
+                    }
+                }
+                return null;
+            };
+
+            const getNextMilestone = () => {
+                return MILESTONES.find(m => currentStacks < m.points);
+            };
+
+            const currentMilestone = getCurrentMilestone();
+            const nextMilestone = getNextMilestone();
+            const colorScheme = COLOR_SCHEMES[currentMilestone?.color || 'default'];
+            const maxHistory = Math.max(...history.map(h => h.stacks), 200);
+
+            return (
+                <div className={`min-h-screen ${colorScheme.bg} ${colorScheme.text} pb-20`}>
+                    <div className={`${colorScheme.card} p-6 shadow-lg`}>
+                        <h1 className="text-3xl font-bold text-center mb-2">Hyper Stacks</h1>
+                        <p className={`text-center ${colorScheme.accent} text-sm`}>
+                            {new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+                        </p>
                     </div>
-                  );
-                })}
-              </div>
-            </div>
 
-            {/* Stack Buttons */}
-            <div className="space-y-3">
-              <button
-                onClick={() => addStacks(1)}
-                className={`w-full ${colorScheme.button} py-6 rounded-xl font-bold text-xl shadow-lg transition-transform active:scale-95`}
-              >
-                Stack (+1)
-              </button>
-              <button
-                onClick={() => addStacks(5)}
-                className={`w-full ${colorScheme.button} py-6 rounded-xl font-bold text-xl shadow-lg transition-transform active:scale-95`}
-              >
-                Stack X5 (+5)
-              </button>
-              <button
-                onClick={() => addStacks(10)}
-                className={`w-full ${colorScheme.button} py-6 rounded-xl font-bold text-xl shadow-lg transition-transform active:scale-95`}
-              >
-                Stack X10 (+10)
-              </button>
-            </div>
-          </div>
-        )}
-
-        {activeTab === 'tasks' && (
-          <div className="space-y-4">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold">Task List</h2>
-              <button
-                onClick={() => setShowAddTask(true)}
-                className={`${colorScheme.button} p-3 rounded-full shadow-lg`}
-              >
-                <Plus size={24} />
-              </button>
-            </div>
-
-            {showAddTask && (
-              <div className={`${colorScheme.card} rounded-xl p-4 shadow-xl mb-4`}>
-                <input
-                  type="text"
-                  placeholder="Task name..."
-                  value={newTask.name}
-                  onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
-                  className={`w-full bg-slate-700 ${colorScheme.text} rounded-lg px-4 py-3 mb-3 outline-none`}
-                />
-                <div className="flex gap-2 mb-3">
-                  {[1, 5, 10].map(points => (
-                    <button
-                      key={points}
-                      onClick={() => setNewTask({ ...newTask, points })}
-                      className={`flex-1 py-2 rounded-lg ${
-                        newTask.points === points ? colorScheme.button : 'bg-slate-700'
-                      }`}
-                    >
-                      {points} pt{points > 1 ? 's' : ''}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex gap-2">
-                  <button
-                    onClick={addTask}
-                    className={`flex-1 ${colorScheme.button} py-2 rounded-lg font-semibold`}
-                  >
-                    Add Task
-                  </button>
-                  <button
-                    onClick={() => setShowAddTask(false)}
-                    className="px-4 py-2 bg-slate-700 rounded-lg"
-                  >
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            )}
-
-            <div className="space-y-2">
-              {tasks.length === 0 ? (
-                <p className={`text-center ${colorScheme.accent} py-8`}>
-                  No tasks yet. Add your first task!
-                </p>
-              ) : (
-                tasks.map(task => (
-                  <div
-                    key={task.id}
-                    className={`${colorScheme.card} rounded-xl p-4 flex justify-between items-center shadow-lg`}
-                  >
-                    <div>
-                      <p className="font-semibold">{task.name}</p>
-                      <p className={`text-sm ${colorScheme.accent}`}>{task.points} point{task.points > 1 ? 's' : ''}</p>
+                    <div className="flex border-b border-slate-700">
+                        <button
+                            onClick={() => setActiveTab('tracker')}
+                            className={`flex-1 py-3 px-4 flex items-center justify-center gap-2 ${
+                                activeTab === 'tracker' ? colorScheme.button : 'bg-transparent'
+                            }`}
+                        >
+                            <TrendingUp />
+                            Tracker
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('tasks')}
+                            className={`flex-1 py-3 px-4 flex items-center justify-center gap-2 ${
+                                activeTab === 'tasks' ? colorScheme.button : 'bg-transparent'
+                            }`}
+                        >
+                            <List />
+                            Tasks
+                        </button>
+                        <button
+                            onClick={() => setActiveTab('history')}
+                            className={`flex-1 py-3 px-4 flex items-center justify-center gap-2 ${
+                                activeTab === 'history' ? colorScheme.button : 'bg-transparent'
+                            }`}
+                        >
+                            <Calendar />
+                            History
+                        </button>
                     </div>
-                    <button
-                      onClick={() => deleteTask(task.id)}
-                      className="p-2 bg-red-600 hover:bg-red-700 rounded-full"
-                    >
-                      <X size={20} />
-                    </button>
-                  </div>
-                ))
-              )}
-            </div>
-          </div>
-        )}
 
-        {activeTab === 'history' && (
-          <div className="space-y-4">
-            <h2 className="text-2xl font-bold mb-4">History</h2>
-            
-            {history.length === 0 ? (
-              <p className={`text-center ${colorScheme.accent} py-8`}>
-                No history yet. Complete your first day!
-              </p>
-            ) : (
-              <>
-                {/* Graph */}
-                <div className={`${colorScheme.card} rounded-xl p-6 shadow-xl mb-6`}>
-                  <h3 className="font-semibold mb-4">Stack History</h3>
-                  <div className="flex items-end justify-between h-48 gap-2">
-                    {history.slice(-7).map((day, idx) => {
-                      const height = (day.stacks / maxHistory) * 100;
-                      return (
-                        <div key={idx} className="flex-1 flex flex-col items-center gap-2">
-                          <div className="w-full flex flex-col justify-end h-full">
-                            <div
-                              className={`w-full ${colorScheme.button} rounded-t transition-all`}
-                              style={{ height: `${height}%` }}
-                            />
-                          </div>
-                          <p className="text-xs text-center">{day.stacks}</p>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
+                    <div className="p-6">
+                        {activeTab === 'tracker' && (
+                            <div className="space-y-6">
+                                <div className={`${colorScheme.card} rounded-2xl p-8 text-center shadow-xl`}>
+                                    <p className={`${colorScheme.accent} text-sm uppercase tracking-wide mb-2`}>
+                                        Current Stacks
+                                    </p>
+                                    <p className="text-6xl font-bold mb-4">{currentStacks}</p>
+                                    {currentMilestone && (
+                                        <div className="mb-2">
+                                            <span className={`inline-block px-4 py-2 rounded-full ${colorScheme.button} font-semibold`}>
+                                                🏆 {currentMilestone.name}
+                                            </span>
+                                        </div>
+                                    )}
+                                    {nextMilestone && (
+                                        <p className={`${colorScheme.accent} text-sm`}>
+                                            {nextMilestone.points - currentStacks} more to {nextMilestone.name}
+                                        </p>
+                                    )}
+                                    {currentStacks >= 200 && (
+                                        <p className={`${colorScheme.accent} text-sm`}>
+                                            🎉 Maximum milestone reached!
+                                        </p>
+                                    )}
+                                </div>
 
-                {/* History List */}
-                <div className="space-y-2">
-                  {history.slice().reverse().map((day, idx) => (
-                    <div
-                      key={idx}
-                      className={`${colorScheme.card} rounded-xl p-4 shadow-lg`}
-                    >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <p className="font-semibold">{day.date}</p>
-                          <p className={`text-sm ${colorScheme.accent}`}>
-                            {day.stacks} stacks • {day.milestones} milestone{day.milestones !== 1 ? 's' : ''}
-                          </p>
-                        </div>
-                        <div className="text-right">
-                          <p className="text-2xl font-bold">{day.stacks}</p>
-                        </div>
-                      </div>
+                                <div className={`${colorScheme.card} rounded-2xl p-6 shadow-xl`}>
+                                    <h3 className="font-semibold mb-4">Milestone Progress</h3>
+                                    <div className="space-y-3">
+                                        {MILESTONES.map((milestone, idx) => {
+                                            const isReached = currentStacks >= milestone.points;
+                                            const progress = Math.min((currentStacks / milestone.points) * 100, 100);
+                                            
+                                            return (
+                                                <div key={idx}>
+                                                    <div className="flex justify-between text-sm mb-1">
+                                                        <span>{milestone.name}</span>
+                                                        <span>{milestone.points} pts</span>
+                                                    </div>
+                                                    <div className="w-full bg-slate-700 rounded-full h-2">
+                                                        <div
+                                                            className={`h-2 rounded-full transition-all duration-500 ${
+                                                                isReached ? `bg-${milestone.color}-500` : 'bg-slate-600'
+                                                            }`}
+                                                            style={{ width: `${progress}%` }}
+                                                        />
+                                                    </div>
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+
+                                <div className="space-y-3">
+                                    <button
+                                        onClick={() => addStacks(1)}
+                                        className={`w-full ${colorScheme.button} py-6 rounded-xl font-bold text-xl shadow-lg transition-transform active:scale-95`}
+                                    >
+                                        Stack (+1)
+                                    </button>
+                                    <button
+                                        onClick={() => addStacks(5)}
+                                        className={`w-full ${colorScheme.button} py-6 rounded-xl font-bold text-xl shadow-lg transition-transform active:scale-95`}
+                                    >
+                                        Stack X5 (+5)
+                                    </button>
+                                    <button
+                                        onClick={() => addStacks(10)}
+                                        className={`w-full ${colorScheme.button} py-6 rounded-xl font-bold text-xl shadow-lg transition-transform active:scale-95`}
+                                    >
+                                        Stack X10 (+10)
+                                    </button>
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'tasks' && (
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-center mb-4">
+                                    <h2 className="text-2xl font-bold">Task List</h2>
+                                    <button
+                                        onClick={() => setShowAddTask(true)}
+                                        className={`${colorScheme.button} p-3 rounded-full shadow-lg`}
+                                    >
+                                        <Plus />
+                                    </button>
+                                </div>
+
+                                {showAddTask && (
+                                    <div className={`${colorScheme.card} rounded-xl p-4 shadow-xl mb-4`}>
+                                        <input
+                                            type="text"
+                                            placeholder="Task name..."
+                                            value={newTask.name}
+                                            onChange={(e) => setNewTask({ ...newTask, name: e.target.value })}
+                                            className={`w-full bg-slate-700 ${colorScheme.text} rounded-lg px-4 py-3 mb-3 outline-none`}
+                                        />
+                                        <div className="flex gap-2 mb-3">
+                                            {[1, 5, 10].map(points => (
+                                                <button
+                                                    key={points}
+                                                    onClick={() => setNewTask({ ...newTask, points })}
+                                                    className={`flex-1 py-2 rounded-lg ${
+                                                        newTask.points === points ? colorScheme.button : 'bg-slate-700'
+                                                    }`}
+                                                >
+                                                    {points} pt{points > 1 ? 's' : ''}
+                                                </button>
+                                            ))}
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={addTask}
+                                                className={`flex-1 ${colorScheme.button} py-2 rounded-lg font-semibold`}
+                                            >
+                                                Add Task
+                                            </button>
+                                            <button
+                                                onClick={() => setShowAddTask(false)}
+                                                className="px-4 py-2 bg-slate-700 rounded-lg"
+                                            >
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                <div className="space-y-2">
+                                    {tasks.length === 0 ? (
+                                        <p className={`text-center ${colorScheme.accent} py-8`}>
+                                            No tasks yet. Add your first task!
+                                        </p>
+                                    ) : (
+                                        tasks.map(task => (
+                                            <div
+                                                key={task.id}
+                                                className={`${colorScheme.card} rounded-xl p-4 flex justify-between items-center shadow-lg`}
+                                            >
+                                                <div>
+                                                    <p className="font-semibold">{task.name}</p>
+                                                    <p className={`text-sm ${colorScheme.accent}`}>{task.points} point{task.points > 1 ? 's' : ''}</p>
+                                                </div>
+                                                <button
+                                                    onClick={() => deleteTask(task.id)}
+                                                    className="p-2 bg-red-600 hover:bg-red-700 rounded-full"
+                                                >
+                                                    <X />
+                                                </button>
+                                            </div>
+                                        ))
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {activeTab === 'history' && (
+                            <div className="space-y-4">
+                                <h2 className="text-2xl font-bold mb-4">History</h2>
+                                
+                                {history.length === 0 ? (
+                                    <p className={`text-center ${colorScheme.accent} py-8`}>
+                                        No history yet. Complete your first day!
+                                    </p>
+                                ) : (
+                                    <>
+                                        <div className={`${colorScheme.card} rounded-xl p-6 shadow-xl mb-6`}>
+                                            <h3 className="font-semibold mb-4">Stack History</h3>
+                                            <div className="flex items-end justify-between h-48 gap-2">
+                                                {history.slice(-7).map((day, idx) => {
+                                                    const height = (day.stacks / maxHistory) * 100;
+                                                    return (
+                                                        <div key={idx} className="flex-1 flex flex-col items-center gap-2">
+                                                            <div className="w-full flex flex-col justify-end h-full">
+                                                                <div
+                                                                    className={`w-full ${colorScheme.button} rounded-t transition-all`}
+                                                                    style={{ height: `${height}%` }}
+                                                                />
+                                                            </div>
+                                                            <p className="text-xs text-center">{day.stacks}</p>
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            {history.slice().reverse().map((day, idx) => (
+                                                <div
+                                                    key={idx}
+                                                    className={`${colorScheme.card} rounded-xl p-4 shadow-lg`}
+                                                >
+                                                    <div className="flex justify-between items-center">
+                                                        <div>
+                                                            <p className="font-semibold">{day.date}</p>
+                                                            <p className={`text-sm ${colorScheme.accent}`}>
+                                                                {day.stacks} stacks • {day.milestones} milestone{day.milestones !== 1 ? 's' : ''}
+                                                            </p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="text-2xl font-bold">{day.stacks}</p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </>
+                                )}
+                            </div>
+                        )}
                     </div>
-                  ))}
                 </div>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
+            );
+        }
+
+        ReactDOM.render(<HyperStacksApp />, document.getElementById('root'));
+    </script>
+</body>
+</html>
